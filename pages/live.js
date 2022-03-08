@@ -1,6 +1,8 @@
+import { route } from 'next/dist/server/router';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react'
 
-let hlss;
+let hlss = [];
 function create_hls(i, videoSrc) {
     if (typeof document === "undefined") return;
     console.log(i, videoSrc, hlss)
@@ -53,6 +55,10 @@ const Home = () => {
         "https://cdn.jwplayer.com/manifests/pZxWPRg4.m3u8",
         "https://test-streams.mux.dev/dai-discontinuity-deltatre/manifest.m3u8",
     ];
+    // const items = [
+    //     "http://3.137.198.247/live/test.m3u8",
+    //     "http://3.133.107.189/live/test.m3u8",
+    // ]
     const [main_src, set_main_src] = useState(items[0]);
     var view = true;
     var done = false;
@@ -67,8 +73,13 @@ const Home = () => {
                         console.log("video" + (i), "clicked");
                         var menu = document.getElementById("menu");
                         menu.style.opacity = 0;
-                        set_main_src(items[i - 1]);
+                        console.log("set main src", items[i - 1]);
+                        //set_main_src(items[i - 1]);
                         setTimeout(function () { view = true; }, 100);
+                        // for (var i = 1; i < items.length + 1; i++) {
+                        //     if (hlss[i] === null) continue;
+                        //     hlss[i].destroy();
+                        // }
 
                     }
                 });
@@ -77,21 +88,35 @@ const Home = () => {
                 if (beforePlay) {
                     document.getElementById("music").play();
                     beforePlay = false;
+                    for (var i = 0; i < items.length; i++) {
+                        create_hls(i + 1, items[i]);
+                    }
                 }
                 if (view) {
                     var menu = document.getElementById("menu");
                     menu.style.opacity = 1;
                     view = false;
                     console.log("click")
+                    // for (var i = 0; i < items.length; i++) {
+                    //     create_hls(i + 1, items[i]);
+                    // }
                 }
             }, []);
         }
     }, []);
+    const router = useRouter()
     useEffect(() => {
-        console.log("change 0", main_src)
+        var idx;
+        console.log("query", router.query.src, router.query)
+        if (router.query.src === undefined) return
+        else idx = Number(router.query.src);
+        console.log("change 0", idx)
         if (hlss[0] !== null) { hlss[0].destroy() }
-        create_hls(0, main_src);
-    }, [main_src])
+        setTimeout(() => {
+            console.log("change main src", items[idx])
+            create_hls(0, items[idx]);
+        }, 300);
+    }, [router.query])
     return (
         <div>
             <audio src="sample.mp3" id='music'></audio>
@@ -100,7 +125,6 @@ const Home = () => {
                     <div className='w-full h-screen opacity-90 bg-black z-10 absolute'></div>
                     <div className='z-30 text-white absolute h-fit w-full text-center mt-[7%]'>
                         {items.map((k, idx) => {
-                            create_hls(idx + 1, items[idx]);
                             return (
                                 <div className='w-[32%] mx-1 inline-block z-40' key={k}>
                                     <video src={k} id={"video" + (idx + 1)} autoPlay muted playsInline></video>
