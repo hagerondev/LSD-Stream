@@ -57,7 +57,7 @@ action : [
 
 */
 
-function ws_connect(button_id, text_id, chat_name, chat_content, callback) {
+function ws_connect(button_id, text_id, chat_name, chat_content, callback, disconnect) {
     //WebSocket接続
     //var connection = new WebSocket("wss://lsd-com.hageron.com:443/");
     var connection = new WebSocket("wss://lsd-com.hageron.com:9991/");
@@ -89,6 +89,7 @@ function ws_connect(button_id, text_id, chat_name, chat_content, callback) {
     connection.onclose = function () {
         //document.getElementById("eventType").value = "通信切断イベント受信";
         //document.getElementById("dispMsg").value = "";
+        disconnect();
     };
 
     document.getElementById(button_id).addEventListener("click", function () {

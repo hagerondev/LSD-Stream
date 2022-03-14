@@ -89,25 +89,36 @@ const Home = () => {
           setTimeout(function () { box.remove() }, 1300);
           console.log(event.data)
         }
+      }, function () {
+        var box = document.createElement("div");
+        box.className = "chat-item";
+        var content = document.createElement("div");
+        content.className = "chat-content text-red-600";
+
+        content.innerHTML = "接続が切れました。再読込してください。";
+        box.appendChild(content);
+        var hist = document.getElementById("history");
+        hist.appendChild(box);
+        hist.scrollTop = hist.scrollHeight;
       })
     }
   }, []);
   return (
-    <div className='font-mono'>
+    <div className='font-mono h-screen'>
       <Script
         src="./ws.js"
         strategy="beforeInteractive"
       />
-      <div className='bg-white'>
-        <div className='relative mx-12'>
-          <img src='lsd_logo.jpg' className='h-20 pr-12 py-2 inline-block'></img>
+      <div className='bg-white h-[10vh]'>
+        <div className='relative mx-12 h-full'>
+          <img src='lsd_logo.jpg' className='h-full pr-12 py-2 inline-block'></img>
           <div className='inline-block text-3xl align-middle'>Multi-angle viewing</div>
           <a className="absolute right-0 top-5" href='https://github.com/hagerondev/LSD-Stream'>
             <div className='inline-block text-2xl align-middle font-bold border rounded-full border-black aspect-square w-8 text-center bg-gray-100'>？</div>
           </a>
         </div>
       </div>
-      <div id='main' className='flex flex-row p-8'>
+      <div id='main' className='flex flex-row p-8 h-[90vh]'>
         <div className='basis-3/4'>
           <div id="display_iframe_wrap" className='relative overflow-hidden mx-auto'>
             <div id='display_iframe' className='w-[88%] mx-auto'>
@@ -127,13 +138,13 @@ const Home = () => {
         </div>
         <div id='right' className='basis-1/4'>
           <div id='chat' className='bg-white mr-10 h-full rounded-lg border flex flex-col'>
-            <h1 className='p-4 text-2xl font-bold'>チャット</h1>
+            <h1 className='p-4 text-2xl font-bold'>コメント</h1>
             <div id='history' className='bg-[#f9f9f9] overflow-scroll flex-1'>
-              <div className='chat-item'>
+              {/*<div className='chat-item'>
                 <div className='chat-name'>name</div>
                 <div className='chat-time'>19:35</div>
                 <div className='chat-content'>content</div>
-              </div>
+              </div>*/}
             </div>
             <div className='bg-white basis-1/5 p-4'>
               <input placeholder='name' type="text" className='border-b text-lg' id="chat_name" /><br />
