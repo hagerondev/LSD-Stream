@@ -36,7 +36,7 @@ jobs:
     # プロジェクトルート直下に.nextディレクトリができる
     - name: build
       run: npm run build
-      working-directory: ./functions
+      working-directory: ./client
 
     # しかしGitHub Pagesの仕様として_から始まるディレクトリが見えず404となる
     # つまりHTMLからJSを読み込めない
