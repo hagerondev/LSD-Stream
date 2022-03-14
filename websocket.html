@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #display {
+            background-color: gray;
+            /* height: 270px;
+            width: 480px; */
+            width: 1920px;
+            height: 1080px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .display_item {
+            color: red;
+            position: absolute;
+            bottom: -70px;
+            font-size: 3em;
+            animation: elm 1.2s 1;
+            user-select: none;
+        }
+
+        @keyframes elm {
+            to {
+                transform: translate(0px, -140px);
+                opacity: 0;
+            }
+        }
+
+        #good_button {
+            color: red;
+            opacity: 0.3;
+            font-size: 5em;
+            cursor: pointer;
+            position: absolute;
+            bottom: 0px;
+            right: 5%;
+            user-select: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="display">
+        <!--input id="dispMsg"-->
+        <div id="good_button">❤</div>
+        <!--span style="color: red; position: absolute; bottom: 0;">❤</span-->
+    </div>
+</body>
+<script src="ws.js"></script>
+<script>
+    ws_connect("good_button", function (event) {
+        //document.getElementById("dispMsg").value = event.data;
+        const display = document.getElementById("display");
+        //console.log(display.clientWidth, display.clientHeight, event.data);
+        const heart = document.createElement("span");
+        if (event.data == "good") {
+            heart.innerHTML = "❤";
+        } else {
+            return;
+        }
+        heart.className = "display_item";
+        heart.style.left = display.clientWidth * Math.random() + "px";
+        display.appendChild(heart);
+        setTimeout(function () { heart.remove() }, 1300);
+    })
+</script>
+
+</html>
