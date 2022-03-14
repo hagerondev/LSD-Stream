@@ -5,15 +5,22 @@
 # Tech
 
 ## インフラ
-* LightSail (AWS)
-* CDN (AWS)
+* 配信サーバ : LightSail (AWS)
+* コメントサーバ : EC2 (AWS)
 
-## バック
+## バックエンド
+
+### 配信
+
 * Nginx + rtmp-module
 * rtmp push
 * hls pull
 
-## フロント
+### コメント
+
+* websockets (Python)
+
+## フロントエンド
 * Next.js
 * Tailwind CSS
 * hls.js
