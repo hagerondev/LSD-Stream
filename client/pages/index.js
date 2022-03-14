@@ -118,7 +118,7 @@ const Home = () => {
           </a>
         </div>
       </div>
-      <div id='main' className='flex flex-row p-8 h-[90vh]'>
+      <div id='main' className='flex flex-row p-8 h-[80vh]'>
         <div className='basis-3/4'>
           <div id="display_iframe_wrap" className='relative overflow-hidden mx-auto'>
             <div id='display_iframe' className='w-[88%] mx-auto'>
