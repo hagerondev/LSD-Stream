@@ -36,7 +36,7 @@ jobs:
     # Next.jsアプリをビルドする
     # プロジェクトルート直下に.nextディレクトリができる
     - name: build
-      run: pwd && npm run build
+      run: npm run build
       working-directory: ./client
 
     # しかしGitHub Pagesの仕様として_から始まるディレクトリが見えず404となる
@@ -44,6 +44,7 @@ jobs:
     # これを回避するために.nojekyllファイルをoutディレクトリに作る
     - name: add nojekyll
       run: touch ./out/.nojekyll
+      working-directory: ./client
 
     # gh-pagesブランチにoutディレクトリの中身をプッシュする
     # gh-pagesブランチは自動的に作成される
@@ -51,5 +52,5 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./out
+        publish_dir: ./client/out
         cname: lsd.hageron.com
