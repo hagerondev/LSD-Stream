@@ -1,4 +1,4 @@
-# LSD Streaming System
+# LSD Streaming Platform
 
 マルチアングル配信プラットフォーム
 

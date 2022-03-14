@@ -42,9 +42,14 @@
 	position: absolute;
 	bottom: -70px;
 	font-size: 3em;
-	animation: elm 1.2s 1;
+	animation: elm 1.2s forwards;
 	user-select: none;
 	z-index: 55;
+	text-align: center;
+}
+
+.chat-react-name {
+	@apply text-sm mt-[-30px]
 }
 
 @keyframes elm {
@@ -64,4 +69,19 @@
 	right: 5%;
 	user-select: none;
 	z-index: 65;
+}
+.chat-item {
+	@apply mx-4 mt-2 border-b
+}
+
+.chat-name {
+	@apply inline-block text-sm mx-2 w-24 overflow-auto break-all align-middle
+}
+
+.chat-time {
+	@apply inline-block text-xs mx-1 align-middle
+}
+
+.chat-content {
+	@apply inline-block text-lg mx-2 align-middle
 }

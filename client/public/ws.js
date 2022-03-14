@@ -57,7 +57,7 @@ action : [
 
 */
 
-function ws_connect(button_id, callback) {
+function ws_connect(button_id, text_id, chat_name, chat_content, callback) {
     //WebSocket接続
     //var connection = new WebSocket("wss://lsd-com.hageron.com:443/");
     var connection = new WebSocket("wss://lsd-com.hageron.com:9991/");
@@ -93,6 +93,26 @@ function ws_connect(button_id, callback) {
 
     document.getElementById(button_id).addEventListener("click", function () {
         console.log("good action")
-        connection.send("good");
+        connection.send(JSON.stringify({
+            "type": "chat",
+            "name": document.getElementById(chat_name).value,
+            "action": "react",
+            "content": "heart",
+        }));
+
+    });
+    document.getElementById(text_id).addEventListener("click", function () {
+        console.log("message action")
+        var content = document.getElementById(chat_content).value;
+        if (content.replace(/ /g, '') === "") return;
+        document.getElementById(chat_content).value = "";
+        var name = document.getElementById(chat_name).value;
+        localStorage.setItem("chat-name", name);
+        connection.send(JSON.stringify({
+            "type": "chat",
+            "name": name,
+            "action": "message",
+            "content": content,
+        }));
     });
 }
