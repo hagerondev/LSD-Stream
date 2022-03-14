@@ -35,9 +35,8 @@ jobs:
     # Next.jsアプリをビルドする
     # プロジェクトルート直下に.nextディレクトリができる
     - name: build
-      run: |
-        cd client
-        npm run build
+      run: npm run build
+      working-directory: ./functions
 
     # しかしGitHub Pagesの仕様として_から始まるディレクトリが見えず404となる
     # つまりHTMLからJSを読み込めない
