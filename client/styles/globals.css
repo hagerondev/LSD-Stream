@@ -36,3 +36,32 @@
     -webkit-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
 }
+
+.display_item {
+	color: red;
+	position: absolute;
+	bottom: -70px;
+	font-size: 3em;
+	animation: elm 1.2s 1;
+	user-select: none;
+	z-index: 55;
+}
+
+@keyframes elm {
+	to {
+		transform: translate(0px, -140px);
+		opacity: 0;
+	}
+}
+
+#good_button {
+	color: red;
+	opacity: 0.3;
+	font-size: 5em;
+	cursor: pointer;
+	position: absolute;
+	bottom: 0px;
+	right: 5%;
+	user-select: none;
+	z-index: 65;
+}

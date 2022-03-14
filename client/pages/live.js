@@ -1,6 +1,7 @@
 import { route } from 'next/dist/server/router';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react'
+import Script from 'next/script'
 
 let hlss = [];
 function create_hls(i, videoSrc) {
@@ -67,6 +68,23 @@ const Home = () => {
         if (done === false) {
             done = true;
             console.log("init")
+            if (typeof document !== "undefined") {
+                ws_connect("good_button", function (event) {
+                    //document.getElementById("dispMsg").value = event.data;
+                    const display = document.getElementById("display");
+                    //console.log(display.clientWidth, display.clientHeight, event.data);
+                    const heart = document.createElement("span");
+                    if (event.data == "good") {
+                        heart.innerHTML = "❤";
+                    } else {
+                        return;
+                    }
+                    heart.className = "display_item";
+                    heart.style.left = display.clientWidth * Math.random() + "px";
+                    display.appendChild(heart);
+                    setTimeout(function () { heart.remove() }, 1300);
+                })
+            }
             for (var i = 1; i < items.length + 1; i++) {
                 document.getElementById("video" + i).addEventListener("click", function () {
                     if (!view) {
@@ -119,8 +137,12 @@ const Home = () => {
     }, [router.query])
     return (
         <div>
+            <Script
+                src="./ws.js"
+                strategy="beforeInteractive"
+            />
             <audio src="sample.mp3" id='music'></audio>
-            <div className='visual bg-gray-700 z-0'>
+            <div className='visual bg-gray-700 z-0 overflow-hidden' id='display'>
                 <div id='menu' className='absolute top-0 left-0 z-10 w-full h-fit opacity-0 transition'>
                     <div className='w-full h-screen opacity-90 bg-black z-10 absolute'></div>
                     <div className='z-30 text-white absolute h-fit w-full text-center mt-[7%]'>
@@ -135,6 +157,9 @@ const Home = () => {
                 </div>
                 <div className='movie'>
                     <video autoPlay muted playsInline id='video0'></video>
+                </div>
+                <div id='good_button'>
+                    ❤
                 </div>
             </div>
         </div >
