@@ -128,7 +128,7 @@ const Home = () => {
         <div id='right' className='basis-1/4'>
           <div id='chat' className='bg-white mr-10 h-full rounded-lg border flex flex-col'>
             <h1 className='p-4 text-2xl font-bold'>チャット</h1>
-            <div id='history' className='bg-[#f9f9f9] h-[600px] overflow-scroll'>
+            <div id='history' className='bg-[#f9f9f9] overflow-scroll flex-1'>
               <div className='chat-item'>
                 <div className='chat-name'>name</div>
                 <div className='chat-time'>19:35</div>
