@@ -74,8 +74,8 @@ async def accept(websocket, path):
  
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 ssl_context.load_cert_chain("fullchain1.pem",keyfile="privkey1.pem")
-#start_server = websockets.serve(accept, "0.0.0.0", 443, ssl=ssl_context)
-start_server = websockets.serve(accept, "0.0.0.0", 9991, ssl=ssl_context)
+start_server = websockets.serve(accept, "0.0.0.0", 443, ssl=ssl_context)
+#start_server = websockets.serve(accept, "0.0.0.0", 9991, ssl=ssl_context)
 
 #start_server = websockets.serve(accept, "0.0.0.0", 9991)
 
