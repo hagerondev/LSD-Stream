@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      background-color: black;
+      height: 100%;
+    }
+
+    body {
+      height: 100%;
+    }
+
+    #video_wrap {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+
+    video {
+      width: 50%;
+    }
+
+    #play {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border: 0;
+      font-size: 10em;
+      background-color: aquamarine;
+    }
+  </style>
+</head>
+
+<body>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <div id="video_wrap"></div>
+  <button id="play">準備中</button>
+  <script>
+    //
+    const tg_ip = ["3.112.172.201", "52.198.130.219"];
+    //const g_ip = ["18.224.56.144","18.216.7.25"];
+    const e_time = 0.1;
+
+    //delay settings
+    var tuning = [450, -5.5];
+    // let base_time = [0,0,0]; //cannot change
+    // const original_gosa = [632.4,0,1036.3]//,
+    // const hlss = [];
+    const base_time = {};
+    const original_gosa = {};
+    const hlss = {};
+    var i = 0;
+    for (let ip of tg_ip) {
+      base_time[ip] = 0;
+      original_gosa[ip] = tuning[i]; i++;
+      hlss[ip] = null;
+    }
+
+    const g_ip = [];
+    let complete_pre_cnt = 0;
+
+    function complete_check() {
+      if (complete_pre_cnt == tg_ip.length) {
+        document.getElementById("play").innerHTML = "Play"
+        document.getElementById("play").addEventListener("click", allplay)
+      }
+    }
+
+    function get(ip, callback, url = "") {
+      //console.log("open request",ip)
+      if (url == "") {
+        url = "http://" + ip + "/base.txt"
+      }
+      var request = new XMLHttpRequest();
+      request.open('GET', url);
+      request.onreadystatechange = function () {
+        if (request.readyState != 4) {
+          // リクエスト中
+        } else if (request.status != 200) {
+          // 失敗
+          complete_pre_cnt++;
+          complete_check()
+          console.log("request failed", url)
+        } else {
+          // 取得成功
+          complete_pre_cnt++
+          complete_check()
+          console.log("request", ip, request.responseText)
+          callback(request.responseText, ip)
+        }
+      };
+      request.send(null);
+    }
+
+    function init() {
+      //タグ作成
+      for (var i = 0; i < tg_ip.length; i++) {
+        const element = document.createElement("video");
+        element.id = "video_" + tg_ip[i];
+        element.setAttribute("muted", "");
+        element.setAttribute("playsinline", "");
+        element.setAttribute("autoplay", "")
+        document.getElementById("video_wrap").appendChild(element);
+      }
+      //自動再生
+
+      for (var i = 0; i < tg_ip.length; i++) {
+        var hls = new Hls();
+        hlss[tg_ip[i]] = hls;
+        var video = document.getElementById("video_" + tg_ip[i]);
+        if (Hls.isSupported()) {
+          hls.loadSource("http://" + tg_ip[i] + "/live/test.m3u8");
+          hls.attachMedia(video);
+          hls.on(Hls.Events.BUFFER_CREATED, function (i) {
+            get(tg_ip[i], function (x, ip) {
+              //var idx = tg_ip.indexOf(ip);
+              base_time[ip] = Number(x);
+            });
+            g_ip.push(tg_ip[i]);
+
+          }.bind(null, i));
+          hls.on(Hls.Events.ERROR, function (i, e) {
+            console.log("error: cannot read", tg_ip[i], e);
+            document.getElementById("video_" + tg_ip[i]).remove();
+            delete hlss[tg_ip[i]];
+          }.bind(null, i))
+        }
+
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          console.log("HLS is not supported.")
+        }
+      }
+    }
+
+    let first_play = false;
+    function allplay() {
+      if (first_play == false) {
+        document.getElementById("play").remove();
+        first_play = true;
+        for (var i = 0; i < g_ip.length; i++) {
+          document.getElementById("video_" + g_ip[i]).play()
+        }
+        rec();
+      }
+    }
+
+    function get_time(i) {
+      var video = document.getElementById("video_" + g_ip[i]);
+      var fromBegin = Number(hlss[g_ip[i]].streamController.fragPlaying.relurl.split("-")[1].split(".")[0]);
+      var ans = original_gosa[g_ip[i]] + base_time[g_ip[i]];
+      var already = Math.floor(fromBegin / 3) * 25 + fromBegin % 3 * 8.333;
+      ans += already;
+      ans += video.currentTime % 25 % 8.333;
+      console.log("\t", i, fromBegin, already, video.currentTime % 25 % 8.333);
+      return ans
+    }
+
+    function arr_relative(arr) {
+      var min = Math.min(...arr);
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] -= min;
+      }
+      return arr;
+    }
+    let first_init = false
+    const before_time = [0, 0];
+    const before_seg = [0, 0];
+    function rec() {
+      let maxgosa = 0;
+      const times = [];
+      for (var i = 0; i < g_ip.length; i++) {
+        var time = get_time(i);
+        console.log("time", time)
+        times.push(time)
+      }
+      var r_times = arr_relative(times)
+      console.log(r_times)
+      for (var i = 0; i < g_ip.length; i++) {
+        if (r_times[i] > e_time) {
+          if (first_init === true && r_times[i] > 7.5) {
+            console.log("segment huge")
+            continue;
+          }
+          if (first_init === false) {
+            first_init = true
+          }
+          console.log("pause", "video" + (i + 1), r_times[i])
+          var video = document.getElementById("video_" + g_ip[i]);
+          video.pause();
+          (function (i) {
+            setTimeout(function () {
+              document.getElementById("video_" + g_ip[i]).play()
+              console.log("play video_" + g_ip[i]);
+            }, r_times[i] * 1000 - 10);
+          })(i)
+          maxgosa = Math.max(maxgosa, r_times[i]);
+        }
+      }
+      //if (maxgosa>0) {
+      // console.log(hlss[g_ip[0]].streamController.fragPlaying.relurl,hlss[g_ip[1]].streamController.fragPlaying.relurl)
+      //}
+      //setTimeout(rec, Math.max(1000,Math.max(...r_times)*1000+1000));
+      setTimeout(rec, Math.max(1000, maxgosa * 1000 + 2000));
+    }
+
+    window.onload = function () {
+      init();
+    }
+  </script>
+</body>
+
+</html>
