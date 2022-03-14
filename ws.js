@@ -2,7 +2,7 @@
 function ws_connect(button_id, callback) {
     //WebSocket接続
     //var connection = new WebSocket("wss://lsd-com.hageron.com:443/");
-    var connection = new WebSocket("wss://lsd-com.hageron.com:9001/");
+    var connection = new WebSocket("wss://lsd-com.hageron.com:9991/");
     console.log("connecting")
     //接続通知
     connection.onopen = function (event) {
