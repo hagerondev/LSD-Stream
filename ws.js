@@ -34,6 +34,7 @@ function ws_connect(button_id, callback) {
     };
 
     document.getElementById(button_id).addEventListener("click", function () {
+        console.log("good action")
         connection.send("good");
     });
 }
