@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import Script from 'next/script'
 
 const Home = () => {
+  const [watching, watching_state] = useState(0);
   useEffect(() => {
     console.log("init")
     if (typeof document !== "undefined") {
@@ -24,6 +25,7 @@ const Home = () => {
         // setTimeout(function () { heart.remove() }, 1300);
         //console.log(event.data)
         const data = JSON.parse(event.data);
+        watching_state(data.watching);
         console.log(data)
         if (data.type == "connection" && data.action == "connect" && data.name == "server") {
           for (var i = 0; i < data.content.length - 1; i++) {
@@ -48,6 +50,8 @@ const Home = () => {
             hist.appendChild(box);
             hist.scrollTop = hist.scrollHeight;
           }
+        } else if (data.type == "connection" && data.action == "disconnect") {
+          console.log("disconnect someone")
         } else if (data.action == "message" && data.type == "chat") {
           var box = document.createElement("div");
           box.className = "chat-item";
@@ -127,6 +131,9 @@ const Home = () => {
           </div>
           <div id='detail'>
             <div className='m-8'>
+              <div className='my-2 text-xl'>
+                視聴中：{watching}人
+              </div>
               <div className='my-2'>
                 全画面視聴は
                 <a className='text-blue-600 hover:border-b cursor-pointer' href="/hls.html">
