@@ -1,3 +1,61 @@
+/*
+ws message send
+
+data = {
+    "type": xxx,
+    "name": ---,
+    "action": yyy,
+    "content": zzz, #optional
+}
+
+type: connection
+action : [
+    connect : 接続,
+    disconnect: 接続解除,
+]
+
+type: chat
+action: [
+    react : [
+        content : heart (heart以外はいいや)
+    ]
+    message: [
+        conten : zzz (チャット内容)
+    ]
+]
+
+ws message receive
+
+data = {
+    "type": xxx,
+    "name": "server",
+    "action": yyy,
+    "content": zzz, #optional
+}
+
+type: connection
+action : [
+    "watching": [
+        "content": [
+            k
+        ]
+    ]
+]
+
+type: chat
+action : [
+    "all": [
+        "content": [チャット履歴]
+    ]
+    "chat": [
+        "content": チャット
+    ]
+    "react":[
+        "content": "heart" (heart以外はいいや)
+    ]
+]
+
+*/
 
 function ws_connect(button_id, callback) {
     //WebSocket接続

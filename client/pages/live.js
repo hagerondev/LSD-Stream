@@ -48,18 +48,18 @@ function create_hls(i, videoSrc) {
 
 const Home = () => {
     if (typeof document !== "undefined") { hlss = [null, null, null, null, null, null, null,]; }
-    const items = [
-        "https://playertest.longtailvideo.com/adaptive/vod-with-mp3/manifest.m3u8",
-        "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
-        "https://playertest.longtailvideo.com/adaptive/aes-with-tracks/master.m3u8",
-        "https://test-streams.mux.dev/test_001/stream.m3u8",
-        "https://cdn.jwplayer.com/manifests/pZxWPRg4.m3u8",
-        "https://test-streams.mux.dev/dai-discontinuity-deltatre/manifest.m3u8",
-    ];
     // const items = [
-    //     "http://3.137.198.247/live/test.m3u8",
-    //     "http://3.133.107.189/live/test.m3u8",
-    // ]
+    //     "https://playertest.longtailvideo.com/adaptive/vod-with-mp3/manifest.m3u8",
+    //     "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+    //     "https://playertest.longtailvideo.com/adaptive/aes-with-tracks/master.m3u8",
+    //     "https://test-streams.mux.dev/test_001/stream.m3u8",
+    //     "https://cdn.jwplayer.com/manifests/pZxWPRg4.m3u8",
+    //     "https://test-streams.mux.dev/dai-discontinuity-deltatre/manifest.m3u8",
+    // ];
+    const items = [
+        "http://3.224.211.189/live/test.m3u8",
+        "http://34.200.222.156/live/test.m3u8",
+    ]
     const [main_src, set_main_src] = useState(items[0]);
     var view = true;
     var done = false;

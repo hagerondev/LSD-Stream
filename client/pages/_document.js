@@ -6,7 +6,7 @@ export default function Document() {
             <Head>
                 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
             </Head>
-            <body className='bg-gray-700'>
+            <body className='bg-[#F9F9F9]'>
                 <Main />
                 <NextScript />
             </body>
