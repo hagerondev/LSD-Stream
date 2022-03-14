@@ -7,6 +7,7 @@
 ## インフラ
 * 配信サーバ : LightSail (AWS)
 * コメントサーバ : EC2 (AWS)
+* 視聴ページ：GitHub Pages
 
 ## バックエンド
 
