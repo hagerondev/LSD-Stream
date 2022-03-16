@@ -4,3 +4,4 @@ chain1.pem
 fullchain1.pem
 history/*
 privkey1.pem
+nohup.out
