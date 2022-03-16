@@ -55,13 +55,15 @@
   <button id="play">準備中</button>
   <script>
     //
-    const tg_ip = ["lsd-c1.hageron.com", "lsd-c2.hageron.com","lsd-c3.hageron.com"];
+    //const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com","lsd-c3.hageron.com","lsd-c4.hageron.com"];
+    const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com","lsd-c3.hageron.com","lsd-c4.hageron.com"];
     //const tg_ip = ["lsd-c1.hageron.com"];
     //const g_ip = ["18.224.56.144","18.216.7.25"];
     const e_time = 0.1;
 
     //delay settings
-    var tuning = [14433.6,0,1260];
+    //var tuning = [1173.55,0,1000];
+    var tuning = [1173,-0.4,27,336.5];
     // let base_time = [0,0,0]; //cannot change
     // const original_gosa = [632.4,0,1036.3]//,
     // const hlss = [];
@@ -176,7 +178,11 @@
         document.getElementById("play").remove();
         first_play = true;
         for (var i = 0; i < g_ip.length; i++) {
-          document.getElementById("video_" + g_ip[i]).play()
+          var v = document.getElementById("video_" + g_ip[i]);
+          if (i!=0) {
+            v.muted = true;
+          }
+          v.play();
         }
         rec();
       }
@@ -194,50 +200,56 @@
     }
 
     function arr_relative(arr) {
-      var min = Math.min(...arr);
-      for (var i = 0; i < arr.length; i++) {
-        arr[i] -= min;
+      // var min = Math.min(...arr);
+      // for (var i = 0; i < arr.length; i++) {
+      //   arr[i] -= min;
+      // }
+      // return arr;
+      var min = 100000000000;
+      for(key in arr) {
+        min = Math.min(min,arr[key]);
+      }
+      for(key in arr) {
+        arr[key]-=min;
       }
       return arr;
     }
     let first_init = false
-    const before_time = [0, 0];
-    const before_seg = [0, 0];
+    const before_time = [0, 0,0,0,0,0,0,0,0,0];
+    const before_seg = [0, 0,0,0,0,0,0,0,0,0];
     function rec() {
       let maxgosa = 0;
       const times = [];
       for (var i = 0; i < g_ip.length; i++) {
         var time = get_time(i);
         console.log("time", time)
-        times.push(time)
+        times[g_ip[i]] = time;
       }
       var r_times = arr_relative(times)
-      console.log(r_times)
+      console.log("relative", r_times)
       for (var i = 0; i < g_ip.length; i++) {
-        if (r_times[i] > e_time) {
-          if (first_init === true && r_times[i] > 7.5) {
+        if (r_times[g_ip[i]] > e_time) {
+          if (first_init==true && r_times[g_ip[i]] > 7.5) {
             console.log("segment huge")
             continue;
           }
-          if (first_init === false) {
-            first_init = true
-          }
-          console.log("pause", "video" + (i + 1), r_times[i])
+          console.log("pause", "video_" + g_ip[i], r_times[g_ip[i]])
           var video = document.getElementById("video_" + g_ip[i]);
           video.pause();
           (function (i) {
             setTimeout(function () {
               document.getElementById("video_" + g_ip[i]).play()
               console.log("play video_" + g_ip[i]);
-            }, r_times[i] * 1000 - 10);
+            }, r_times[g_ip[i]] * 1000 - 10);
           })(i)
-          maxgosa = Math.max(maxgosa, r_times[i]);
+          maxgosa = Math.max(maxgosa, r_times[g_ip[i]]);
         }
       }
       //if (maxgosa>0) {
       // console.log(hlss[g_ip[0]].streamController.fragPlaying.relurl,hlss[g_ip[1]].streamController.fragPlaying.relurl)
       //}
       //setTimeout(rec, Math.max(1000,Math.max(...r_times)*1000+1000));
+      first_init = true;
       setTimeout(rec, Math.max(1000, maxgosa * 1000 + 2000));
     }
 
