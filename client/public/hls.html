@@ -31,9 +31,7 @@
       width: 0%;
     }
 
-    .multi_video {
-
-    }
+    .multi_video {}
 
     #play {
       position: absolute;
@@ -42,7 +40,7 @@
       left: 0;
       right: 0;
       border: 0;
-      font-size: 10em;
+      font-size: 4em;
       background-color: aquamarine;
     }
   </style>
@@ -56,14 +54,15 @@
   <script>
     //
     //const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com","lsd-c3.hageron.com","lsd-c4.hageron.com"];
-    const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com","lsd-c3.hageron.com","lsd-c4.hageron.com"];
+    const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com", "lsd-c3.hageron.com", "lsd-c4.hageron.com"];
     //const tg_ip = ["lsd-c1.hageron.com"];
     //const g_ip = ["18.224.56.144","18.216.7.25"];
     const e_time = 0.1;
 
     //delay settings
     //var tuning = [1173.55,0,1000];
-    var tuning = [1173,-0.4,27,336.5];
+    //var tuning = [-1011.8,-548,-549.3,-300.2];
+    var tuning = [0, -3, -1, -0.17]
     // let base_time = [0,0,0]; //cannot change
     // const original_gosa = [632.4,0,1036.3]//,
     // const hlss = [];
@@ -83,21 +82,21 @@
     let complete_pre_cnt = 0;
 
     function complete_check() {
-      console.log(complete_pre_cnt,cannot_connect_cnt, tg_ip_base_length)
-      if (complete_pre_cnt+cannot_connect_cnt == tg_ip_base_length) {
+      console.log(complete_pre_cnt, cannot_connect_cnt, tg_ip_base_length)
+      if (complete_pre_cnt + cannot_connect_cnt == tg_ip_base_length) {
         let wper;
-        if (complete_pre_cnt==1) {
+        if (complete_pre_cnt == 1) {
           wpre = "100"
-        }else if(complete_pre_cnt==5) {
+        } else if (complete_pre_cnt == 5) {
           wpre = "33"
-        }else{
+        } else {
           wpre = "50"
         }
-        wpre = wpre+"%"
+        wpre = wpre + "%"
         document.getElementById("play").innerHTML = "Play";
         document.getElementById("play").addEventListener("click", allplay);
         var elements = document.getElementsByClassName("multi_video");
-        for(var i=0;i<elements.length;i++) {
+        for (var i = 0; i < elements.length; i++) {
           console.log(wpre)
           elements[i].style.width = wpre;
         }
@@ -163,6 +162,7 @@
             console.log("error: cannot read", tg_ip[i], e);
             document.getElementById("video_" + tg_ip[i]).remove();
             delete hlss[tg_ip[i]];
+            complete_check()
           }.bind(null, i))
         }
 
@@ -179,7 +179,7 @@
         first_play = true;
         for (var i = 0; i < g_ip.length; i++) {
           var v = document.getElementById("video_" + g_ip[i]);
-          if (i!=0) {
+          if (i != 0) {
             v.muted = true;
           }
           v.play();
@@ -206,22 +206,24 @@
       // }
       // return arr;
       var min = 100000000000;
-      for(key in arr) {
-        min = Math.min(min,arr[key]);
+      for (key in arr) {
+        min = Math.min(min, arr[key]);
       }
-      for(key in arr) {
-        arr[key]-=min;
+      for (key in arr) {
+        arr[key] -= min;
       }
       return arr;
     }
     let first_init = false
-    const before_time = [0, 0,0,0,0,0,0,0,0,0];
-    const before_seg = [0, 0,0,0,0,0,0,0,0,0];
+    const before_time = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const before_seg = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     function rec() {
       let maxgosa = 0;
       const times = [];
       for (var i = 0; i < g_ip.length; i++) {
-        var time = get_time(i);
+        //var time = get_time(i);
+        var time = original_gosa[g_ip[i]];
+        original_gosa[g_ip[i]] = 0;
         console.log("time", time)
         times[g_ip[i]] = time;
       }
@@ -229,7 +231,7 @@
       console.log("relative", r_times)
       for (var i = 0; i < g_ip.length; i++) {
         if (r_times[g_ip[i]] > e_time) {
-          if (first_init==true && r_times[g_ip[i]] > 7.5) {
+          if (first_init == true && r_times[g_ip[i]] > 7.5) {
             console.log("segment huge")
             continue;
           }

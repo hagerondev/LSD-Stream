@@ -27,7 +27,15 @@ const Home = () => {
         const data = JSON.parse(event.data);
         watching_state(data.watching);
         console.log(data)
-        if (data.type == "connection" && data.action == "connect" && data.name == "server") {
+        if (data.type === "master") {
+          if (data.name === "delete" && data.action === "message") {
+            var tar_id = data.content;
+            document.getElementById("com_" + tar_id).remove();
+            var hist = document.getElementById("history");
+            hist.scrollTop = hist.scrollHeight;
+          }
+
+        } else if (data.type == "connection" && data.action == "connect" && data.name == "server") {
           for (var i = 0; i < data.content.length - 1; i++) {
             var sep_data = JSON.parse(data.content[i])
             if (sep_data.type != "chat" || sep_data.action != "message") continue;
@@ -46,9 +54,10 @@ const Home = () => {
             box.appendChild(name);
             box.appendChild(time);
             box.appendChild(content);
+            box.id = "com_" + String(sep_data.id);
             var hist = document.getElementById("history");
             hist.appendChild(box);
-            hist.scrollTop = hist.scrollHeight;
+
           }
         } else if (data.type == "connection" && data.action == "disconnect") {
           console.log("disconnect someone")
@@ -67,6 +76,7 @@ const Home = () => {
           box.appendChild(name);
           box.appendChild(time);
           box.appendChild(content);
+          box.id = "com_" + String(data.id);
           var hist = document.getElementById("history");
           hist.appendChild(box);
           hist.scrollTop = hist.scrollHeight;
@@ -116,16 +126,14 @@ const Home = () => {
       <div className='bg-white h-[10vh]'>
         <div className='relative mx-12 h-full'>
           <img src='lsd_logo.jpg' className='h-full pr-12 py-2 inline-block'></img>
-          <div className='inline-block text-3xl align-middle'>Multi-angle viewing</div>
-          <a className="absolute right-0 top-5" href='https://github.com/hagerondev/LSD-Stream'>
-            <div className='inline-block text-2xl align-middle font-bold border rounded-full border-black aspect-square w-8 text-center bg-gray-100'>？</div>
-          </a>
+          <div className='inline-block text-3xl align-middle'>LSD 卒コン</div>
+
         </div>
       </div>
-      <div id='main' className='flex flex-row p-8 h-[80vh]'>
+      <div id='main' className='xl:flex flex-col xl:flex-row p-2 pt-6 xl:p-8 h-[80vh]'>
         <div className='basis-3/4'>
           <div id="display_iframe_wrap" className='relative overflow-hidden mx-auto'>
-            <div id='display_iframe' className='w-[88%] mx-auto'>
+            <div id='display_iframe' className='xl:w-[97%] mx-auto'>
               <iframe src='hls.html' className='w-full aspect-video mx-auto'></iframe>
             </div>
           </div>
@@ -140,13 +148,18 @@ const Home = () => {
                   こちら
                 </a>から
               </div>
+              <div>
+                <a className="" href='https://github.com/hagerondev/LSD-Stream'>
+                  <div className='text-sm text-blue-600'>この配信の裏側</div>
+                </a>
+              </div>
             </div>
           </div>
         </div>
-        <div id='right' className='basis-1/4'>
-          <div id='chat' className='bg-white mr-10 h-full rounded-lg border flex flex-col'>
+        <div id='right' className='basis-1/4 mx-auto w-[97%]'>
+          <div id='chat' className='bg-white xl:mr-10 h-full rounded-lg border flex flex-col'>
             <h1 className='p-4 text-2xl font-bold'>コメント</h1>
-            <div id='history' className='bg-[#f9f9f9] overflow-scroll flex-1'>
+            <div id='history' className='bg-[#f9f9f9] overflow-scroll flex-1 max-h-80 xl:max-h-full'>
               {/*<div className='chat-item'>
                 <div className='chat-name'>name</div>
                 <div className='chat-time'>19:35</div>
@@ -154,8 +167,8 @@ const Home = () => {
               </div>*/}
             </div>
             <div className='bg-white basis-1/5 p-4'>
-              <input placeholder='name' type="text" className='border-b text-lg' id="chat_name" /><br />
-              <input placeholder='最高！' type="text" className='border-b text-xl my-3' id="chat_content" />
+              <input placeholder='name' type="text" className='border-b text-lg w-full' id="chat_name" /><br />
+              <input placeholder='最高！' type="text" className='border-b text-xl my-3 w-full' id="chat_content" />
               <div id='chat-buttons'>
                 <button className=' border rounded-md px-8 bg-[#f9f9f9] mx-4 text-xl' id='text_button'>送信</button>
                 <button className='text-red-600 border rounded-md px-8 bg-[#f9f9f9] mx-4 text-xl' id='good_button2'>❤</button>
