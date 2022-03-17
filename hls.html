@@ -50,11 +50,11 @@
 
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <div id="video_wrap"></div>
-  <button id="play">少々お待ち下さい</button>
+  <button id="play">読込中</button>
   <script>
     //
     //const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com","lsd-c3.hageron.com","lsd-c4.hageron.com"];
-    const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com", "lsd-c3.hageron.com", "lsd-c4.hageron.com"];
+    const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com"]//, "lsd-c3.hageron.com", "lsd-c4.hageron.com"];
     //const tg_ip = ["lsd-c1.hageron.com"];
     //const g_ip = ["18.224.56.144","18.216.7.25"];
     const e_time = 0.1;
@@ -62,7 +62,8 @@
     //delay settings
     //var tuning = [1173.55,0,1000];
     //var tuning = [-1011.8,-548,-549.3,-300.2];
-    var tuning = [0, -3, -1, -0.17]
+    var tuning = [0.38, 2, -1, -0.17]
+    const init_segs = [0, 94];
     // let base_time = [0,0,0]; //cannot change
     // const original_gosa = [632.4,0,1036.3]//,
     // const hlss = [];
@@ -70,9 +71,11 @@
     const base_time = {};
     const original_gosa = {};
     const hlss = {};
+    const segs = {};
     var i = 0;
     for (let ip of tg_ip) {
       base_time[ip] = 0;
+      segs[ip] = init_segs[i];
       original_gosa[ip] = tuning[i]; i++;
       hlss[ip] = null;
     }
@@ -81,9 +84,9 @@
     const g_ip = [];
     let complete_pre_cnt = 0;
 
-    function complete_check() {
+    function complete_check(force = false) {
       console.log(complete_pre_cnt, cannot_connect_cnt, tg_ip_base_length)
-      if (complete_pre_cnt + cannot_connect_cnt == tg_ip_base_length) {
+      if (complete_pre_cnt + cannot_connect_cnt == tg_ip_base_length || force) {
         let wper;
         if (complete_pre_cnt == 1) {
           wpre = "100"
@@ -141,12 +144,12 @@
         document.getElementById("video_wrap").appendChild(element);
       }
       //自動再生
-
+      var is_iPhone = false;
       for (var i = 0; i < tg_ip.length; i++) {
         var hls = new Hls();
         hlss[tg_ip[i]] = hls;
         var video = document.getElementById("video_" + tg_ip[i]);
-        if (true || Hls.isSupported()) {
+        if (Hls.isSupported()) {
           hls.loadSource("https://" + tg_ip[i] + "/live/test.m3u8");
           hls.attachMedia(video);
           hls.on(Hls.Events.BUFFER_CREATED, function (i) {
@@ -155,6 +158,7 @@
               base_time[ip] = Number(x);
             });
             g_ip.push(tg_ip[i]);
+
 
           }.bind(null, i));
           hls.on(Hls.Events.ERROR, function (i, e) {
@@ -167,15 +171,23 @@
         }
 
         else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          is_iPhone = true;
           console.log("HLS is not supported.")
+          video.src = "https://" + tg_ip[i] + "/live/test.m3u8";
         }
       }
+      setTimeout(function () {
+        if (is_iPhone) {
+
+        }
+      }, 3000)
     }
 
     let first_play = false;
     function allplay() {
       if (first_play == false) {
-        document.getElementById("play").remove();
+        //document.getElementById("play").remove();
+        document.getElementById("play").innerHTML = "映像同期中";
         first_play = true;
         for (var i = 0; i < g_ip.length; i++) {
           var v = document.getElementById("video_" + g_ip[i]);
@@ -183,7 +195,18 @@
             v.muted = true;
           }
           v.play();
+          var seg = hlss[g_ip[i]].streamController.fragPlaying.relurl.split("-")[1].split(".")[0];
+          console.log(g_ip[i], seg)
+          segs[g_ip[i]] += Number(seg);
         }
+        console.log("default seg", segs)
+        rel_segs = arr_relative(segs);
+        console.log("rel seg", rel_segs);
+        console.log("brefore o_gosa", original_gosa)
+        for (var key in rel_segs) {
+          original_gosa[key] += 8.28 * rel_segs[key];
+        }
+        console.log("after o_gosa", original_gosa)
         rec();
       }
     }
@@ -247,12 +270,16 @@
           maxgosa = Math.max(maxgosa, r_times[g_ip[i]]);
         }
       }
+      console.log("max wait", maxgosa)
+      setTimeout(function () {
+        document.getElementById("play").remove();
+      }, maxgosa * 1000);
       //if (maxgosa>0) {
       // console.log(hlss[g_ip[0]].streamController.fragPlaying.relurl,hlss[g_ip[1]].streamController.fragPlaying.relurl)
       //}
       //setTimeout(rec, Math.max(1000,Math.max(...r_times)*1000+1000));
       first_init = true;
-      setTimeout(rec, Math.max(1000, maxgosa * 1000 + 2000));
+      //setTimeout(rec, Math.max(1000, maxgosa * 1000 + 2000)); => 方針変更により不要
     }
 
     window.onload = function () {
