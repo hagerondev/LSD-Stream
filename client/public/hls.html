@@ -178,7 +178,8 @@
       }
       setTimeout(function () {
         if (is_iPhone) {
-
+          document.getElementById("play").innerHTML = "Play";
+          document.getElementById("play").addEventListener("click", allplay);
         }
       }, 3000)
     }
