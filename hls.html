@@ -50,7 +50,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <div id="video_wrap"></div>
-  <button id="play">準備中</button>
+  <button id="play">少々お待ち下さい</button>
   <script>
     //
     //const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com","lsd-c3.hageron.com","lsd-c4.hageron.com"];
@@ -146,7 +146,7 @@
         var hls = new Hls();
         hlss[tg_ip[i]] = hls;
         var video = document.getElementById("video_" + tg_ip[i]);
-        if (Hls.isSupported()) {
+        if (true || Hls.isSupported()) {
           hls.loadSource("https://" + tg_ip[i] + "/live/test.m3u8");
           hls.attachMedia(video);
           hls.on(Hls.Events.BUFFER_CREATED, function (i) {
