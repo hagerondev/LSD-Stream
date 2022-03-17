@@ -2,8 +2,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export -o /var/www/html",
-    "export": "next export -o /var/www/html",
+    "build": "next build && next export",
+    "export_sub": "next export -o /var/www/html",
     "start": "next start"
   },
   "dependencies": {

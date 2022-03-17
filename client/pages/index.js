@@ -150,11 +150,11 @@ const Home = () => {
             </div>
           </div>
           <div id='detail'>
-            <div className='m-8'>
-              <div className='my-2 text-xl'>
+            <div className='my-4 mx-6'>
+              <div className='my-1 text-xl'>
                 視聴中：{watching}人
               </div>
-              <div className='my-2'>
+              <div className='my-1'>
                 全画面視聴は
                 <a className='text-blue-600 hover:border-b cursor-pointer' href="/hls.html">
                   こちら
@@ -163,8 +163,8 @@ const Home = () => {
               <div className='text-sm'>
                 <span className='text-red-600 text-md'>注意 </span>
                 <div>
-                  ・Chrome推奨
-                  <br />・iPhoneは非推奨(同期しないときがあるので、そのときは何回かリロードしてください)
+                  ・safari不可
+                  <br />・映像がずれる時は何回かリロードしてください
                 </div>
               </div>
               <div>
