@@ -187,7 +187,8 @@
     let first_play = false;
     function allplay() {
       if (first_play == false) {
-        document.getElementById("play").remove();
+        //document.getElementById("play").remove();
+        document.getElementById("play").innerHTML = "映像同期中";
         first_play = true;
         for (var i = 0; i < g_ip.length; i++) {
           var v = document.getElementById("video_" + g_ip[i]);
@@ -270,6 +271,10 @@
           maxgosa = Math.max(maxgosa, r_times[g_ip[i]]);
         }
       }
+      console.log("max wait", maxgosa)
+      setTimeout(function () {
+        document.getElementById("play").remove();
+      }, maxgosa * 1000);
       //if (maxgosa>0) {
       // console.log(hlss[g_ip[0]].streamController.fragPlaying.relurl,hlss[g_ip[1]].streamController.fragPlaying.relurl)
       //}
