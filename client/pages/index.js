@@ -160,6 +160,13 @@ const Home = () => {
                   こちら
                 </a>から
               </div>
+              <div className='text-sm'>
+                <span className='text-red-600 text-md'>注意 </span>
+                <div>
+                  ・Chrome推奨
+                  <br />・iPhoneは非推奨(同期しないときがあるので、そのときは何回かリロードしてください)
+                </div>
+              </div>
               <div>
                 <a className="" href='https://github.com/hagerondev/LSD-Stream'>
                   <div className='text-sm text-blue-600'>この配信の裏側</div>

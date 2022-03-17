@@ -50,7 +50,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <div id="video_wrap"></div>
-  <button id="play">少々お待ち下さい</button>
+  <button id="play">読込中</button>
   <script>
     //
     //const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com","lsd-c3.hageron.com","lsd-c4.hageron.com"];
@@ -84,9 +84,9 @@
     const g_ip = [];
     let complete_pre_cnt = 0;
 
-    function complete_check() {
+    function complete_check(force = false) {
       console.log(complete_pre_cnt, cannot_connect_cnt, tg_ip_base_length)
-      if (complete_pre_cnt + cannot_connect_cnt == tg_ip_base_length) {
+      if (complete_pre_cnt + cannot_connect_cnt == tg_ip_base_length || force) {
         let wper;
         if (complete_pre_cnt == 1) {
           wpre = "100"
@@ -144,12 +144,12 @@
         document.getElementById("video_wrap").appendChild(element);
       }
       //自動再生
-
+      var is_iPhone = false;
       for (var i = 0; i < tg_ip.length; i++) {
         var hls = new Hls();
         hlss[tg_ip[i]] = hls;
         var video = document.getElementById("video_" + tg_ip[i]);
-        if (true || Hls.isSupported()) {
+        if (Hls.isSupported()) {
           hls.loadSource("https://" + tg_ip[i] + "/live/test.m3u8");
           hls.attachMedia(video);
           hls.on(Hls.Events.BUFFER_CREATED, function (i) {
@@ -171,9 +171,17 @@
         }
 
         else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          is_iPhone = true;
           console.log("HLS is not supported.")
+          video.src = "https://" + tg_ip[i] + "/live/test.m3u8";
         }
       }
+      setTimeout(function () {
+        if (is_iPhone) {
+          complete_pre_cnt = tg_ip.length;
+          complete_check()
+        }
+      }, 3000)
     }
 
     let first_play = false;
