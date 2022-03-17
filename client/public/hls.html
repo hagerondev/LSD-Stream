@@ -54,7 +54,7 @@
   <script>
     //
     //const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com","lsd-c3.hageron.com","lsd-c4.hageron.com"];
-    const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com", "lsd-c3.hageron.com", "lsd-c4.hageron.com"];
+    const tg_ip = ["lsd-c5.hageron.com", "lsd-c2.hageron.com"]//, "lsd-c3.hageron.com", "lsd-c4.hageron.com"];
     //const tg_ip = ["lsd-c1.hageron.com"];
     //const g_ip = ["18.224.56.144","18.216.7.25"];
     const e_time = 0.1;
@@ -62,7 +62,8 @@
     //delay settings
     //var tuning = [1173.55,0,1000];
     //var tuning = [-1011.8,-548,-549.3,-300.2];
-    var tuning = [0, -3, -1, -0.17]
+    var tuning = [0.38, 2, -1, -0.17]
+    const init_segs = [0, 94];
     // let base_time = [0,0,0]; //cannot change
     // const original_gosa = [632.4,0,1036.3]//,
     // const hlss = [];
@@ -70,9 +71,11 @@
     const base_time = {};
     const original_gosa = {};
     const hlss = {};
+    const segs = {};
     var i = 0;
     for (let ip of tg_ip) {
       base_time[ip] = 0;
+      segs[ip] = init_segs[i];
       original_gosa[ip] = tuning[i]; i++;
       hlss[ip] = null;
     }
@@ -156,6 +159,7 @@
             });
             g_ip.push(tg_ip[i]);
 
+
           }.bind(null, i));
           hls.on(Hls.Events.ERROR, function (i, e) {
             cannot_connect_cnt++;
@@ -183,7 +187,18 @@
             v.muted = true;
           }
           v.play();
+          var seg = hlss[g_ip[i]].streamController.fragPlaying.relurl.split("-")[1].split(".")[0];
+          console.log(g_ip[i], seg)
+          segs[g_ip[i]] += Number(seg);
         }
+        console.log("default seg", segs)
+        rel_segs = arr_relative(segs);
+        console.log("rel seg", rel_segs);
+        console.log("brefore o_gosa", original_gosa)
+        for (var key in rel_segs) {
+          original_gosa[key] += 8.28 * rel_segs[key];
+        }
+        console.log("after o_gosa", original_gosa)
         rec();
       }
     }
@@ -252,7 +267,7 @@
       //}
       //setTimeout(rec, Math.max(1000,Math.max(...r_times)*1000+1000));
       first_init = true;
-      setTimeout(rec, Math.max(1000, maxgosa * 1000 + 2000));
+      //setTimeout(rec, Math.max(1000, maxgosa * 1000 + 2000)); => 方針変更により不要
     }
 
     window.onload = function () {
