@@ -85,3 +85,7 @@
 .chat-content {
 	@apply inline-block text-lg mx-2 align-middle
 }
+
+.chat-lsd {
+	@apply text-red-600 font-bold
+}

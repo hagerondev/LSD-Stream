@@ -40,7 +40,13 @@ const Home = () => {
             var sep_data = JSON.parse(data.content[i])
             if (sep_data.type != "chat" || sep_data.action != "message") continue;
             var box = document.createElement("div");
-            box.className = "chat-item";
+            if (sep_data.name === "LSD_admin") {
+              sep_data.name = "LSD";
+              box.className = "chat-item chat-lsd";
+            } else {
+              box.className = "chat-item";
+            }
+
             var name = document.createElement("div");
             name.className = "chat-name";
             name.innerHTML = sep_data.name;
@@ -57,13 +63,19 @@ const Home = () => {
             box.id = "com_" + String(sep_data.id);
             var hist = document.getElementById("history");
             hist.appendChild(box);
+            hist.scrollTop = hist.scrollHeight;
 
           }
         } else if (data.type == "connection" && data.action == "disconnect") {
           console.log("disconnect someone")
         } else if (data.action == "message" && data.type == "chat") {
           var box = document.createElement("div");
-          box.className = "chat-item";
+          if (data.name === "LSD_admin") {
+            data.name = "LSD";
+            box.className = "chat-item chat-lsd";
+          } else {
+            box.className = "chat-item";
+          }
           var name = document.createElement("div");
           name.className = "chat-name";
           name.innerHTML = data.name;
