@@ -80,14 +80,15 @@
       hlss[ip] = null;
     }
     let cannot_connect_cnt = 0;
+    let is_iPhone = false;
 
     const g_ip = [];
     let complete_pre_cnt = 0;
+    let wpre = 0;
 
     function complete_check(force = false) {
       console.log(complete_pre_cnt, cannot_connect_cnt, tg_ip_base_length)
       if (complete_pre_cnt + cannot_connect_cnt == tg_ip_base_length || force) {
-        let wper;
         if (complete_pre_cnt == 1) {
           wpre = "100"
         } else if (complete_pre_cnt == 5) {
@@ -144,11 +145,24 @@
         document.getElementById("video_wrap").appendChild(element);
       }
       //自動再生
-      var is_iPhone = false;
+
       for (var i = 0; i < tg_ip.length; i++) {
         var hls = new Hls();
         hlss[tg_ip[i]] = hls;
         var video = document.getElementById("video_" + tg_ip[i]);
+        video.addEventListener("click", function (e) {
+          if (e.target.style.width === wpre) {
+            e.target.style.position = "absolute"
+            e.target.style.top = 0;
+            e.target.style.left = 0;
+            e.target.style.zIndex = 100;
+            e.target.style.width = "100%";
+          } else {
+            e.target.style.position = "static";
+            e.target.style.zIndex = 0;
+            e.target.style.width = wpre;
+          }
+        })
         if (Hls.isSupported()) {
           hls.loadSource("https://" + tg_ip[i] + "/live/test.m3u8");
           hls.attachMedia(video);
@@ -205,7 +219,9 @@
         console.log("rel seg", rel_segs);
         console.log("brefore o_gosa", original_gosa)
         for (var key in rel_segs) {
-          original_gosa[key] += 8.28 * rel_segs[key];
+          if (is_iPhone === false) {
+            original_gosa[key] += 8.28 * rel_segs[key];
+          }
         }
         console.log("after o_gosa", original_gosa)
         rec();
